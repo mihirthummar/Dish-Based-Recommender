@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block css %}
+
+<link href="{{ url_for('static',filename='style/index.css') }}" rel="stylesheet">
+<link href="{{ url_for('static',filename='style/animate.css') }}" rel="stylesheet">
+<link href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/lux/bootstrap.min.css" rel="stylesheet">
+
+
+
+{% endblock %}
+
+{% block content %}
+	 <body>
+
+  <div class="container">
+
+
+    <div class="row" id="header_div">
+      <div class="col-lg-12" style="margin-top: 5%;">
+
+        <a href="/"><img src="/static/img/logo.png" class='animated bounceInLeft' height="200"></a>
+      </div>
+
+      <div class="col-md-4 offset-md-4" style="font-size: 150%;">
+        Hello! Welcome to Delp. To get started, simply input which food you'd like to eat.
+      </div>
+    </div>
+
+
+    <div class="row col-md-12" >
+      
+
+      <div class="col-md-8 offset-md-2" style="margin-top: 2%;">
+          <button type="button" class="btn btn-success" id="search_button" class='col-md-3' style='margin-top: 2%;'>Delp Search</button>
+
+          <input class="form-control form-control-lg" type="text" placeholder="What do you want to eat?" class='col-md-5' id="typeahead" style='margin-top: 3%; text-align: center;'>
+      </div>
+
+      <div class="col-md-8 offset-md-2 row" style="margin-top: 2%" id="results">
+          <div id='yelpwidget'></div>
+      </div>
+
+
+      <script type="text/javascript">
+      String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
+function customized_food(food){
+
+  var frames = [["We've heard that the ", " at this place is really good! You should try it out."], 
+            ["If you really want to eat ", " you should definetley visit this place."],
+            ["Yum! ", " is the best -- you should go here ASAP!"],
+            ["I heard these folk make an amazing ", ". Go check them out!"],
+            ["If you're craving ", " you should visit this restaraunt."],
+            ["These people are well known for their ", "! You should give them a visit."],
+            ["Wanna eat ", "? Go visit this eatery."]];
+
+  var i = Math.floor(Math.random() * 7);
+
+  return frames[i]
+
+
+}
+
+        $("#search_button").click(function() {
+          $("#header_div").hide()
+
+          for (var i = 0; i < foods.length; i++){
+            food = foods[i][0]
+            rest = foods[i][1]
+            prop = foods[i][2]
+
+            if(food == $("#typeahead").val()){
+              console.log(food + " " +rest + " " + prop)
+
+              rest_disp = rest.split('-san-francisco')[0].replaceAll("-", " ")
+              rest_disp = rest_disp.toLowerCase()
+                      .split(' ')
+                      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                      .join(' ');
+
+              link = "http://www.yelp.com/biz/" + rest
+              console.log(link)
+
+              content = '<div class="card border-danger col-md-5 offset-md-1">'+
+                        '<div class="card-header"><a href="' + link + '" target="_blank">' + rest_disp + '</a></div>'+
+                        '<div class="card-body">'+
+                        '<h4 class="card-title">' + customized_food(food)[0] + food + customized_food(food)[1] + '</h4>'+
+                        '<p class="card-text">' +
+                        '</p>' + 
+                        '</div>' +
+                        '</div>'
+
+              $("#results").html($("#results").html() + content)
+              
+            }
+          }
+
+          $("#typeahead").val("")
+        });
+
+        var foods = [];
+
+        data = JSON.parse(data)
+        for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+                for (var i = 0; i < data[key].length; i++){
+                  foods.push([data[key][i], key, i / data[key].length])
+                }
+            }
+        }
+
+        //console.log(foods)
+
+        
+        
+    // $( "#typeahead" ).autocomplete({
+    //   source: foods
+    // });
+
+      </script>
+
+
+      
+    </div>
+  </div>
+
+
+
+
+  </body>
+
+
+{% endblock %}
+
+
